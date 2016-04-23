@@ -1,0 +1,25 @@
+{# src/AppBundle/Resources/views/Task/new.html.twig #}
+
+{# ... #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ form_start(form) }}
+    {# render the task's only field: description #}
+    {{ form_row(form.description) }}
+
+    <h3>Tags</h3>
+    <ul class="tags" data-prototype="{{ form_widget(form.tags.vars.prototype)|e }}">
+        {# iterate over each existing tag and render its only field: name #}
+        {% for tag in form.tags %}
+        
+            <li>{{ form_row(tag.name) }}</li>
+
+        {% endfor %}
+    </ul>
+    <input type="submit" value="Create" />
+{{ form_end(form) }}
+
+{% endblock %}
+{# ... #}
