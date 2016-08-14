@@ -10,15 +10,61 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use AppBundle\Form\ItemFilterType;
 
 
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 
-
+/**
+ * Task controller.
+ *
+ * @Route("/task")
+ */
 class TaskController extends Controller
 {
+
+    /**
+     * @Route("/", name="task_index")
+     */
+    public function indexAction(Request $request){
+        
+        $em     = $this->getDoctrine()->getManager();
+        $tasks  = $em->getRepository('AppBundle:Task')->findAll();
+
+        $form = $this->get('form.factory')->create(ItemFilterType::class);
+
+        if ($request->query->has($form->getName())) {
+            // manually bind values from the request
+            $form->submit($request->query->get($form->getName()));
+
+            // initialize a query builder
+            $filterBuilder = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Task')
+                ->createQueryBuilder('e');
+
+            // build the query from the given form object
+            $this->get('lexik_form_filter.query_builder_updater')->addFilterConditions($form, $filterBuilder);
+
+            // now look at the DQL =)
+            var_dump($filterBuilder->getDql());
+
+            $q = $filterBuilder->getDql();
+
+            //a partir del dql obtengo las entidades
+            $em = $this->getDoctrine()->getManager();
+            $query = $em->createQuery($q);
+
+            $tasks = $query->getResult();
+
+        }
+
+        return $this->render('task/index.html.twig', array(
+            'form' => $form->createView(),
+            'tasks' => $tasks,
+        ));
+    }
     
     /**
      * @Route("/task", name="task")

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Ciudad list</h1>
+
+<!-- testFilter.html.twig -->
+<form method="get" action=".">
+    {{ form_rest(form) }}
+    <input type="submit" name="submit-filter" value="filter" />
+</form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Descripcion</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td>{{ task.description }}</td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
